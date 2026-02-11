@@ -27,18 +27,19 @@
   # and migrated your data accordingly.
   #
   # For more information, see `man configuration.nix` or https://nixos.org/manual/nixos/stable/options#opt-system.stateVersion .
-  system.stateVersion = "25.11"; #FIXME
+  system.stateVersion = "25.11"; # FIXME: change when installing new one
 
   imports = [
     ./hardware-configuration.nix
   ];
 
-  nix.settings.substituters = [ "https://mirrors.ustc.edu.cn/nix-channels/store" ];
+  nix.settings.substituters = [
+    "https://mirrors.ustc.edu.cn/nix-channels/store"
+  ];
   nix.settings.experimental-features = [
     "nix-command"
     "flakes"
   ];
-  nixpkgs.config.allowUnfree = true;
 
   security.sudo.wheelNeedsPassword = false;
 
@@ -69,7 +70,10 @@
     networkmanager.enable = true;
   };
 
-  services.openssh.enable = true;
+  services.openssh = {
+    enable = true;
+    settings.PermitRootLogin = "yes";
+  };
 
   users.users.nix = {
     password = "nix";
@@ -84,14 +88,10 @@
   programs.fish.enable = true;
 
   environment.systemPackages = with pkgs; [
-    btop
     git
     github-cli
     wget
     curl
-    tree
     vim
-    neovim
-    fastfetch
   ];
 }
