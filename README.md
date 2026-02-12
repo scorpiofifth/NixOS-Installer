@@ -17,7 +17,7 @@ mount --mkdir -o umask=077 "${TARGET_DISK}p1" /mnt/boot
 nixos-generate-config --root /mnt
 
 rm /mnt/etc/nixos/configuration.nix
-curl -o /mnt/etc/nixos/configuration.nix https://raw.githubusercontent.com/scorpiofifth/nixos-installer/refs/heads/master/configuration.nix
+curl -o /mnt/etc/nixos/configuration.nix "https://github.com/scorpiofifth/NixOS-Installer/raw/refs/heads/master/configuration.nix"
 
 nixos-install --option substituters "https://mirrors.ustc.edu.cn/nix-channels/store https://cache.nixos.org"
 ```
