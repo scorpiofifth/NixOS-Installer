@@ -2,13 +2,11 @@
 # ▛▖▌▌▚▘▌▌▚   ▐ ▛▌▛▘▜▘▀▌▐ ▐ █▌▛▘
 # ▌▝▌▌▞▖▙▌▄▌  ▟▖▌▌▄▌▐▖█▌▐▖▐▖▙▖▌
 
-{
-  config,
-  lib,
-  pkgs,
-  ...
-}:
-
+{ pkgs, ... }:
+let
+  hostname = "Chromebox";
+  username = "nix";
+in
 {
   # This option defines the first version of NixOS you have installed on this particular machine,
   # and is used to maintain compatibility with application data (e.g. databases) created on older NixOS versions.
@@ -27,44 +25,35 @@
   # and migrated your data accordingly.
   #
   # For more information, see `man configuration.nix` or https://nixos.org/manual/nixos/stable/options#opt-system.stateVersion .
-  system.stateVersion = "25.11"; # FIXME: change when installing new one
+  # FIXME: change when installing new one
+  system.stateVersion = "25.11";
 
-  imports = [
-    ./hardware-configuration.nix
-  ];
+  imports = [ ./hardware-configuration.nix ];
 
-  nix.settings.substituters = [
-    "https://mirrors.ustc.edu.cn/nix-channels/store"
-  ];
-  nix.settings.experimental-features = [
-    "nix-command"
-    "flakes"
-  ];
-
-  security.sudo.wheelNeedsPassword = false;
+  nix.settings = {
+    experimental-features = [
+      "nix-command"
+      "flakes"
+    ];
+    substituters = [
+      "https://mirrors.ustc.edu.cn/nix-channels/store"
+    ];
+  };
 
   boot = {
     loader = {
       efi.canTouchEfiVariables = true;
-      systemd-boot = {
-        enable = true;
-        configurationLimit = 10;
-      };
+      systemd-boot.enable = true;
     };
-    kernelParams = [
-      "nowatchdog"
-    ];
     kernelPackages = pkgs.linuxPackages_zen;
   };
 
   time.timeZone = "Asia/Shanghai";
-
-  console = {
-    keyMap = "colemak";
-  };
+  console.keyMap = "colemak";
+  security.sudo.wheelNeedsPassword = false;
 
   networking = {
-    hostName = "NixOS";
+    hostName = "${hostname}";
     enableIPv6 = false;
     firewall.enable = false;
     networkmanager.enable = true;
@@ -75,17 +64,14 @@
     settings.PermitRootLogin = "yes";
   };
 
-  users.users.nix = {
-    password = "nix";
-    shell = pkgs.fish;
+  users.users."${username}" = {
+    password = "${username}";
     isNormalUser = true;
     extraGroups = [
       "wheel"
       "networkmanager"
     ];
   };
-
-  programs.fish.enable = true;
 
   environment.systemPackages = with pkgs; [
     git
