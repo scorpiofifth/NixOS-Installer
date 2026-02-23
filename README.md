@@ -1,23 +1,36 @@
-# Installer
+# NixOS-Installer
 
 ```bash
-TARGET_DISK="/dev/nvme1n1" #WARN: change to correct one
+# FIXME: change to correct one
+TARGET_DISK=1
+```
 
-parted "${TARGET_DISK}" -- mklabel gpt
-parted "${TARGET_DISK}" -- mkpart ESP fat32 1MB 512MB
-parted "${TARGET_DISK}" -- mkpart root ext4 512MB 100%
-parted "${TARGET_DISK}" -- set 1 esp on
+```bash
+parted "/dev/nvme${TARGET_DISK}n1" -- mklabel gpt
+parted "/dev/nvme${TARGET_DISK}n1" -- mkpart ESP fat32 1MB 512MB
+parted "/dev/nvme${TARGET_DISK}n1" -- mkpart root ext4 512MB 100%
+parted "/dev/nvme${TARGET_DISK}n1" -- set 1 esp on
+```
 
-mkfs.fat -F 32 -n boot "${TARGET_DISK}p1"
-mkfs.ext4 -L nixos "${TARGET_DISK}p2"
+```bash
+mkfs.fat -F 32 -n boot "/dev/nvme${TARGET_DISK}n1p1"
+mkfs.ext4 -L nixos "/dev/nvme${TARGET_DISK}n1p2"
+```
 
-mount --mkdir  "${TARGET_DISK}p2" /mnt
-mount --mkdir -o umask=077 "${TARGET_DISK}p1" /mnt/boot
+```bash
+mount --mkdir "/dev/nvme${TARGET_DISK}n1p2" /mnt
+mount --mkdir -o umask=077 "/dev/nvme${TARGET_DISK}n1p1" /mnt/boot
+```
 
+```bash
 nixos-generate-config --root /mnt
+```
 
+```bash
 rm /mnt/etc/nixos/configuration.nix
-curl -o /mnt/etc/nixos/configuration.nix "https://github.com/scorpiofifth/NixOS-Installer/raw/refs/heads/master/configuration.nix"
+curl -o /mnt/etc/nixos/configuration.nix "https://raw.githubusercontent.com/scorpiofifth/NixOS-Installer/master/configuration.nix"
+```
 
+```bash
 nixos-install --option substituters "https://mirrors.ustc.edu.cn/nix-channels/store https://cache.nixos.org"
 ```
