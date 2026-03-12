@@ -26,7 +26,7 @@ in
   #
   # For more information, see `man configuration.nix` or https://nixos.org/manual/nixos/stable/options#opt-system.stateVersion .
   # FIXME: change when installing new one
-  system.stateVersion = "25.11";
+  system.stateVersion = "26.05";
 
   imports = [ ./hardware-configuration.nix ];
 
